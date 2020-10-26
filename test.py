@@ -56,12 +56,13 @@ country_ids = {"China":"4",
 job_name_ = input("Enter a search term:\n> ")
 job_name = job_name_.replace(" ","+")
 job_name.strip()
-print(country_ids)
+print("\n",country_ids)
 region_id = input("Enter a a region id based on the reference list above :\n> ")
 #num_jobs = input("Enter a number of jobs to scrape:\n> ") 
-#verbose = input("Verbose? Enter True (used for debugging) or False :\n> ") 
+#verbose = input("Verbose? Enter True (for debugging) or False :\n> ") 
 #path = input("Enter chromedriver path to exe:\n> ")
 #slp_time = input("Enter a sleep time based on internet speed (seconds)[recommendation: 15]:\n> ")
+print("\nStarting...")
 
 path= "C:/Program Files/chromedriver/chromedriver.exe"
 
@@ -93,3 +94,5 @@ sa_DA.to_csv('sa_DA.csv', index = False)
 #au_DS.to_csv('au_DS.csv', index = False)
 #au_DE = scr.get_jobs(job_name, region_id, 1000, False, path, 15)
 #au_DE.to_csv('au_DE.csv', index = False)
+
+print("\nCompleted.")

@@ -25,6 +25,9 @@ def get_jobs(job_name, region_id, num_jobs, verbose, path, slp_time):
             
     max_jobs = int(results[0].split(" ")[0])
     print("Found a maximum of",max_jobs,"job postings to scape.")
+    print_total = 0
+    if max_jobs < num_jobs: print_total = max_jobs
+    else: print_total = num_jobs
     
     options = webdriver.ChromeOptions()
     
@@ -58,7 +61,9 @@ def get_jobs(job_name, region_id, num_jobs, verbose, path, slp_time):
     
         try:
             for job_button in job_buttons:  
-                print("Progress: {}".format("" + str(len(jobs)) + "/" + str(num_jobs)))
+                #print("Progress: {}".format("" + str(len(jobs)) + "/" + str(num_jobs)))
+                print("Progress: {}".format("" + str(len(jobs)) + "/" + str(print_total)))
+
                 if len(jobs) >= num_jobs:
                     break
                 job_button.click()
