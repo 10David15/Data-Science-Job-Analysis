@@ -1,11 +1,11 @@
 """
-Collects data on glassdoor job postings
+Collects data from glassdoor job postings for a given search term and region
 Scraper modified for use case from: https://github.com/arapfaik/scraping-glassdoor-selenium
 """
 import bs4
 import urllib
 from urllib.request import urlopen
-from bs4 import BeautifulSoup as soup
+#from bs4 import BeautifulSoup as soup
 from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, StaleElementReferenceException
 from selenium import webdriver
 import time
@@ -13,8 +13,9 @@ import pandas as pd
 
 def get_jobs(job_name, region_id, num_jobs, verbose, path, slp_time):
         
+    print("\nStarting...")
     url = "https://www.glassdoor.com/Job/jobs.htm?suggestCount=0&suggestChosen=false&clickSource=searchBtn&typedKeyword="+job_name+"&sc.keyword="+job_name+"&locT=N&locId="+region_id+"&jobType="
-     #find number listings returned - modify value passed to function
+    #find number listings returned - modify value passed to function
     req = urllib.request.Request(url, headers={'User-Agent' : "Magic Browser"}) 
     soup = bs4.BeautifulSoup(urlopen(req),"html.parser")
     get = soup.find("div", { "class" : "hideHH css-19rczgc e15r6eig0" })
@@ -25,14 +26,12 @@ def get_jobs(job_name, region_id, num_jobs, verbose, path, slp_time):
             
     max_jobs = int(results[0].split(" ")[0])
     print("Found a maximum of",max_jobs,"job postings.")
-    print_total = 0
     if max_jobs < num_jobs: num_jobs = max_jobs
-    else: print_total = num_jobs
     
-    #Initializeee webdriver
+    #Initialize webdriver
     options = webdriver.ChromeOptions()
     
-    #Uncomment the line below if you'd like to scrape without a new Chrome window every time.
+    #Uncomment to scrape without new Chrome window:
     #options.add_argument('headless')
     
     #Change the path to where chromedriver is in your home folder.
@@ -41,7 +40,7 @@ def get_jobs(job_name, region_id, num_jobs, verbose, path, slp_time):
     driver.get(url)
     jobs = []
 
-    while (len(jobs) < num_jobs): #and len(jobs) <= max_jobs
+    while (len(jobs) < num_jobs):
         #Let the page load. Change this number based on your internet speed.
         #Or, wait until the webpage is loaded, instead of hardcoding it.
         time.sleep(slp_time)
@@ -60,24 +59,15 @@ def get_jobs(job_name, region_id, num_jobs, verbose, path, slp_time):
             print(' x out failed')
             pass
         
-        #Going through each job in this page
+        #going through each job in this page
         job_buttons = driver.find_elements_by_class_name("jl")  #jl for Job Listing. These are the buttons we're going to click.
         for job_button in job_buttons:  
-            
-            #new fix?- try on 200
-            if ElementClickInterceptedException: pass
-            #print("Progress: {}".format("" + str(len(jobs)) + "/" + str(print_total)))
             print("Progress: {}".format("" + str(len(jobs)) + "/" + str(num_jobs)))
             if len(jobs) >= num_jobs:
                 break
-            # if len(jobs) >= num_jobs and len(jobs) <= max_jobs:
-            #     break   
-            
-            # if len(jobs) > num_jobs: break
-            # if len(jobs) >= max_jobs: break
-            #LATEST FIX?
+
             try:
-                job_button.click()  #You might 
+                job_button.click()
             except ElementClickInterceptedException:
                 time.sleep(1)
             collected_successfully = False
@@ -102,7 +92,7 @@ def get_jobs(job_name, region_id, num_jobs, verbose, path, slp_time):
             except (NoSuchElementException, StaleElementReferenceException):
                 rating = -1 #You need to set a "not found value. It's important."
 
-            #Printing for debugging
+            #debugging
             if verbose:
                 print("Job Title: {}".format(job_title))
                 print("Salary Estimate: {}".format(salary_estimate))
@@ -111,8 +101,8 @@ def get_jobs(job_name, region_id, num_jobs, verbose, path, slp_time):
                 print("Company Name: {}".format(company_name))
                 print("Location: {}".format(location))
 
-            #Going to the Company tab...
-            #clicking on this:
+            #Company tab...
+            #clicking on:
             #<div class="tab" data-tab-type="overview"><span>Company</span></div>
             try:
                 try:
@@ -164,7 +154,7 @@ def get_jobs(job_name, region_id, num_jobs, verbose, path, slp_time):
                 except NoSuchElementException:
                     competitors = -1
 
-            except NoSuchElementException:  #Rarely, some job postings do not have the "Company" tab.
+            except NoSuchElementException:  #some job postings do not have the "Company" tab.
                 headquarters = -1
                 size = -1
                 founded = -1
@@ -199,16 +189,13 @@ def get_jobs(job_name, region_id, num_jobs, verbose, path, slp_time):
             "Sector" : sector,
             "Revenue" : revenue,
             "Competitors" : competitors})
-            #add job to jobs
             
-            # if len(jobs) < num_jobs: break
-            # if len(jobs) <= max_jobs: break
-            
-        #Clicking on the "next page" button
+        #clicking on "next page" button
         try:
             driver.find_element_by_xpath('.//li[@class="next"]//a').click()
         except NoSuchElementException:
             print("Scraping terminated before reaching target number of jobs. Needed {}, got {}.".format(num_jobs, len(jobs)))
             break
 
-    return pd.DataFrame(jobs)  #This line converts the dictionary object into a pandas DataFrame.
+    return pd.DataFrame(jobs)  #dict to dataframe
+    print("\nCompleted.")
