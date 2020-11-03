@@ -1,5 +1,8 @@
 import scraper as scr 
-import pandas as pd 
+
+# known issue: stops scraping at certain company tabs
+# workaround: this is bypassed by manually clicking on the 'Job'
+# tab of the posting it paused at, then resumes as normal
 
 country_ids = {"China":"4", 
                 "United States":"1", 
@@ -48,11 +51,11 @@ country_ids = {"China":"4",
                 "Ukraine":"244", 
                 "Norway":"180"}
 
-job_name_ = input("Enter a search term:\n> ")
-job_name = job_name_.replace(" ","+")
-job_name.strip()
-print("\n",country_ids)
-region_id = input("Enter a a region id based on the reference list above :\n> ")
+#job_name_ = input("Enter a search term:\n> ")
+#job_name = job_name_.replace(" ","+")
+#job_name.strip()
+#print("\n",country_ids)
+#region_id = input("Enter a a region id based on the reference list above :\n> ")
 #num_jobs = input("Enter a number of jobs to scrape:\n> ") 
 #verbose = input("Verbose? Enter True (for debugging) or False :\n> ") 
 #path = input("Enter chromedriver path to exe:\n> ")
@@ -60,12 +63,39 @@ path= "C:/Program Files/chromedriver/chromedriver.exe"
 #slp_time = input("Enter a sleep time based on internet speed (seconds)[recommendation: 15]:\n> ")
 
 # print("\nStarting...")
-sa_DA = scr.get_jobs(job_name, region_id, 1000, False, path, 15)
-sa_DA.to_csv('sa_DA.csv', index = False)
+# sa_DA = scr.get_jobs("data+analyst", "211", 500, False, path, 15)
+# sa_DA.to_csv('sa_DA.csv', index = False)
+# print("\nTest output (list length): ",str(len(sa_DA["Job Description"])))
+# print("\nTest output (set length): ",str(len(set(sa_DA["Job Description"]))))
+# sa_DS = scr.get_jobs("data+scientist", "211", 500, False, path, 15)
+# sa_DS.to_csv('sa_DS.csv', index = False)
+# sa_DE = scr.get_jobs("data+engineer", "211", 500, True, path, 15)
+# sa_DE.to_csv('sa_DE.csv', index = False)
+
+# us_DA = scr.get_jobs("data+analyst", "1", 500, False, path, 15)
+# us_DA.to_csv('us_DA.csv', index = False)
+# us_DS = scr.get_jobs("data+scientist", "1", 500, False, path, 15)
+# us_DS.to_csv('us_DS.csv', index = False)
+# us_DE = scr.get_jobs("data+engineer", "1", 500, False, path, 15)
+# us_DE.to_csv('us_DE.csv', index = False)
+
+# uk_DA = scr.get_jobs("data+analyst", "2", 500, False, path, 15)
+# uk_DA.to_csv('uk_DA.csv', index = False)
+uk_DS = scr.get_jobs("data+scientist", "2", 500, False, path, 15)
+uk_DS.to_csv('uk_DS.csv', index = False)
+# uk_DE = scr.get_jobs("data+engineer", "2", 500, False, path, 15)
+# uk_DE.to_csv('uk_DE.csv', index = False)
+
+# au_DA = scr.get_jobs("data+analyst", "16", 500, False, path, 15)
+# au_DA.to_csv('au_DA.csv', index = False)
+# au_DS = scr.get_jobs("data+scientist", "16", 500, False, path, 15)
+# au_DS.to_csv('au_DS.csv', index = False)
+# au_DE = scr.get_jobs("data+engineer", "16", 500, False, path, 15)
+# au_DE.to_csv('au_DE.csv', index = False)
 
 # print("\nCompleted.")
-print("\nTest output (list length): ",str(len(sa_DA["Job Description"])))
-print("\nTest output (set length): ",str(len(set(sa_DA["Job Description"]))))
+# print("\nTest output (list length): ",str(len(sa_DA["Job Description"])))
+# print("\nTest output (set length): ",str(len(set(sa_DA["Job Description"]))))
 
 
 
